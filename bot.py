@@ -1,12 +1,12 @@
 import nonebot
 from nonebot.adapters.llbds.adapter import Adapter as LLBDSAdapter
-from nonebot.adapters.red import Adapter as RedAdapter
+
+# 请在这里导入你要使用的适配器，并 register 该适配器
 
 nonebot.init()
 
 driver = nonebot.get_driver()
 driver.register_adapter(LLBDSAdapter)
-driver.register_adapter(RedAdapter)
 
 nonebot.load_plugins("plugins")
 
