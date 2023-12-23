@@ -1,46 +1,61 @@
 import json
-from typing import Any, Dict, Union, List, TYPE_CHECKING
+from typing import Any, Dict, Union, List, Optional
 from pydantic import BaseModel
 from pathlib import Path
 
-from nonebot.adapters.red.api.model import Element
+from nonebot import require, get_bots, get_driver
+from nonebot.adapters import Bot, Event
+from nonebot.adapters.llbds.bot import Bot as BDSBot
+from nonebot.adapters.llbds.event import MessageEvent as BDSMessageEvent
+
+require("nonebot_plugin_alconna")
+
+from nonebot_plugin_alconna import UniMsg
+from nonebot_plugin_alconna.uniseg import (
+    At,
+    AtAll,
+    Card,
+    File,
+    Text,
+    Audio,
+    Emoji,
+    Image,
+    Other,
+    Reply,
+    Video,
+    Voice,
+)
 
 
-def process_message(elements: List[Element]) -> str:
+def process_message(unimsg: UniMsg) -> str:
     result = ""
-    for element in elements:
-        if element.elementType == 1:
-            if TYPE_CHECKING:
-                assert element.textElement
-            text = element.textElement
-            if not text.atType:
-                result += text.content
-            elif text.atType == 1:
-                result += "@全体成员 "
-            elif text.atType == 2:
-                result += f"{text.content} "
-        if element.elementType == 2:
-            result += "[图片]"
-        if element.elementType == 3:
+    for seg in unimsg:
+        if isinstance(seg, At):
+            result += f"@{seg.display or seg.target} "
+        elif isinstance(seg, AtAll):
+            result += "@全体成员 "
+        elif isinstance(seg, Card):
+            result += "[卡片]"
+        elif isinstance(seg, File):
             result += "[文件]"
-        if element.elementType == 4:
+        elif isinstance(seg, Text):
+            result += seg.text
+        elif isinstance(seg, Audio):
             result += "[语音]"
-        if element.elementType == 5:
+        elif isinstance(seg, Emoji):
+            result += "[表情]"
+        elif isinstance(seg, Image):
+            result += "[图片]"
+        elif isinstance(seg, Other):
+            result += "[其他]"
+        elif isinstance(seg, Reply):
+            result += f"[回复] {seg.msg or ''}"
+        elif isinstance(seg, Video):
             result += "[视频]"
-        if element.elementType == 6:
-            result += "[动画表情]"
-        if element.elementType == 7:
-            result += "[回复]"
-        if element.elementType == 10:
-            result += "[小程序]"
-        if element.elementType == 11:
-            if TYPE_CHECKING:
-                assert element.marketFaceElement
-            market_face = element.marketFaceElement
-            result += f"[{market_face.faceName}]"
-        if element.elementType == 16:
-            result += "[合并转发]"
-
+        elif isinstance(seg, Voice):
+            result += "[语音]"
+        else:
+            result += "[未知]"
     return result
 
 
@@ -104,3 +119,26 @@ class JsonDataStorage:
             raise ValueError("Only list-like object is suitable for this method.")
         with open(self.file_path, "w", encoding="UTF-8") as file:
             json.dump([d.dict() for d in data], file, indent=4)
+
+
+def is_llbds_message_event(event: Event) -> bool:
+    return isinstance(event, BDSMessageEvent)
+
+
+def not_llbds_message_event(event: Event) -> bool:
+    return not isinstance(event, BDSMessageEvent)
+
+
+def get_bds_bot() -> Optional[BDSBot]:
+    return get_bots().get(getattr(get_driver().config, "llbds_server_id"))
+
+
+def get_media_bot() -> Optional[Bot]:
+    bots = [
+        bot
+        for bot_id, bot in get_bots().items()
+        if bot_id != getattr(get_driver().config, "llbds_server_id")
+    ]
+    if len(bots) == 0:
+        return None
+    return bots[0]
