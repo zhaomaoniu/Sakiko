@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:45b1cf4efa2c5a3c67506abc20c5feed8d3d590daea93b79bafc1d79d76a89f3"
+content_hash = "sha256:e8956999baf45507ff0992e6b54ce03df749dbebdfe9861430ed1b37ec3a623b"
 
 [[package]]
 name = "aiodns"
@@ -695,15 +695,15 @@ files = [
 
 [[package]]
 name = "nonebot-adapter-llbds"
-version = "0.1.1"
+version = "0.1.2"
 requires_python = ">=3.8"
 summary = "NoneBot2 LLBDS适配器 / LLBDS Adapter for NoneBot2"
 dependencies = [
     "nonebot2>=2.1.2",
 ]
 files = [
-    {file = "nonebot_adapter_llbds-0.1.1-py3-none-any.whl", hash = "sha256:32c365ab07152c3a63e5357933482d526b0523ee766222c2d63b916256b0f67f"},
-    {file = "nonebot_adapter_llbds-0.1.1.tar.gz", hash = "sha256:c9ed38bfb3d8f2f3607675516e5f8974f21b470d68f3d61e60e1679850d7f2e7"},
+    {file = "nonebot_adapter_llbds-0.1.2-py3-none-any.whl", hash = "sha256:369552ade175ea05bc13e80038ee63d016e438601eab9ace27b5f8fe0a7989a7"},
+    {file = "nonebot_adapter_llbds-0.1.2.tar.gz", hash = "sha256:812b86fdf855dac540439ac567366456687d7dc80556f086b605608fa84ff0ba"},
 ]
 
 [[package]]
